@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Locadora de Veículos</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff9c4; /* amarelo clarinho */
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #1976d2; /* azul */
+      color: white;
+      padding: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    header nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    main {
+      padding: 80px 20px 20px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #1976d2;
+      color: white;
+      padding: 10px 15px;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .vehicle-list {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .vehicle {
+      cursor: pointer;
+      border: 1px solid #ccc;
+      padding: 10px;
+      background: white;
+      text-align: center;
+      width: 150px;
+    }
+    .vehicle img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    form input {
+      width: calc(100% - 10px);
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Locadora de Veículos</h1>
+    <nav>
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('vehicles')">Veículos</a>
+    </nav>
+  </header>
+
+  <main id="home">
+    <h2>Bem‑vindo à nossa locadora!</h2>
+    <p>Para começar, faça login como Admin.</p>
+    <button class="btn" onclick="checkLogin()">Login</button>
+  </main>
+
+  <main id="vehicles" style="display:none">
+    <h2>Selecione um veículo:</h2>
+    <div class="vehicle-list">
+      <div class="vehicle" onclick="selectVehicle('Carro A')">
+        <img src="https://via.placeholder.com/150x100?text=Carro+A" alt="Carro A" />
+        <p>Carro A</p>
+      </div>
+      <div class="vehicle" onclick="selectVehicle('Carro B')">
+        <img src="https://via.placeholder.com/150x100?text=Carro+B" alt="Carro B" />
+        <p>Carro B</p>
+      </div>
+      <!-- Mais veículos -->
+    </div>
+  </main>
+
+  <main id="confirm" style="display:none">
+    <h2>Alugar: <span id="veiculo-name"></span></h2>
+    <form id="rent-form" onsubmit="finalize(event)">
+      <label>Nome do motorista:
+        <input type="text" id="driver-name" required />
+      </label>
+      <label>Número CNH:
+        <input type="text" id="driver-cnh" required />
+      </label>
+      <button type="submit" class="btn">Finalizar Pedido</button>
+    </form>
+  </main>
+
+  <script>
+    function showPage(id) {
+      ['home','vehicles','confirm'].forEach(p => {
+        document.getElementById(p).style.display = p === id ? '' : 'none';
+      });
+    }
+
+    function checkLogin() {
+      const user = prompt('Usuário:');
+      const pass = prompt('Senha:');
+      if (user === 'Admin' && pass === '123@4') {
+        alert('Login bem‑sucedido!');
+        sessionStorage.setItem('logged', 'true');
+        showPage('vehicles');
+      } else {
+        alert('Credenciais inválidas!');
+      }
+    }
+
+    function selectVehicle(name) {
+      if (sessionStorage.getItem('logged') !== 'true') {
+        alert('Faça login primeiro!');
+        showPage('home');
+        return;
+      }
+      sessionStorage.setItem('vehicle', name);
+      document.getElementById('veiculo-name').innerText = name;
+      showPage('confirm');
+    }
+
+    function finalize(e) {
+      e.preventDefault();
+      const nome = document.getElementById('driver-name').value;
+      const cnh = document.getElementById('driver-cnh').value;
+      alert(`Aluguel efetuado!\nMotorista: ${nome}\nCNH: ${cnh}`);
+      sessionStorage.removeItem('vehicle');
+      showPage('home');
+    }
+  </script>
+</body>
+</html>
